@@ -1,0 +1,184 @@
+package main
+
+import (
+	"fmt"
+	"math"
+	"errors"
+	"os"
+	"io"
+)
+
+/**
+	map test
+ */
+type PersonInfo struct {
+	ID string
+	Name string
+	Address string
+}
+
+func T1(i int)  {
+	switch i{
+	case 2:
+		fmt.Println("aaaa")
+	case 3:
+		fmt.Println("bbbbb")
+	}
+}
+
+func T2()  {
+	num := 0
+	for {
+		if num > 100{
+			fmt.Println("break")
+			break
+		}
+		num += 1
+		fmt.Println(num)
+	}
+
+	for i:=0; i<20; i++ {
+		fmt.Println(math.Sin(float64(i)))
+	}
+
+	a := []int{1,2,3,4,5,6}
+	for i, j := 0, len(a) -1; i < j; i, j = i+1, j-1{
+		a[i], a[j] = a[j], a[i]
+	}
+	fmt.Println(a)
+	//
+	//for i:=0; i<10; i++{
+	//	HERE:
+	//	for j:=0; j<30; j++{
+	//		if 10 > j{
+	//			goto HERE
+	//		}
+	//		fmt.Println(j)
+	//	}
+	//}
+}
+
+func T3(a, b int) (ret int, err error) {
+	if a < 0 || b < 0{
+		err = errors.New("negative")
+		return
+	}
+	return a+b, nil
+}
+
+func T4(arg ...int)  {
+	for i, v := range arg{
+		fmt.Println(i, v)
+	}
+}
+
+func T5(args ...interface{})  {
+	for _, arg := range args{
+		switch arg.(type) {
+		case int:
+			fmt.Println(arg, "is an int value")
+		case string:
+			fmt.Println(arg, "is s string value")
+		case int64:
+			fmt.Println(arg, "is a int64 value")
+		default:
+			fmt.Println(arg, "is an unkown value")
+		}
+	}
+}
+
+/**
+匿名函数
+ */
+func T6()  {
+	f := func(x, y int) int {
+		return x + y
+	}
+	fmt.Println(f(12, 24))
+
+
+	func(a int){
+		fmt.Println(a)
+	}(12)
+}
+
+/**
+闭包
+ */
+func T7()  {
+	var j int = 5
+
+	a := func() (func()){
+		var i int = 10
+		return func() {
+			fmt.Printf("i, j: %d, %d\n", i, j)
+		}
+	}()
+
+	a()
+	j *= 2
+	a()
+}
+
+func T8(dst, src string) (w int64, err error) {
+	srcFile, err := os.Open(src)
+	if nil != err{
+		return
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if nil != err{
+		return
+	}
+	defer dstFile.Close()
+
+	return io.Copy(dstFile, srcFile)
+}
+
+
+func main() {
+	var personDB map[string]PersonInfo
+	personDB = make(map[string]PersonInfo)
+
+	personDB["12345"] = PersonInfo{"12345", "Tom", "Room 203"}
+	personDB["1"] = PersonInfo{"1", "Jack", "Room 101"}
+
+	personDB1 := map[string]PersonInfo{
+		"12345": {"12345", "Tom", "Room 203"},
+		"1": {"12345", "Tom", "Room 203"},
+	}
+	delete(personDB1, "1")
+	fmt.Println(personDB1)
+
+	person, ok := personDB["12345"]
+	if ok {
+		fmt.Println(person)
+	}else {
+		fmt.Println("not found")
+	}
+
+	a, b := 3, 4
+	fmt.Println(a^b)
+	fmt.Println(a&b)
+	fmt.Println(a|b)
+	fmt.Println(^b)
+
+	T1(3)
+	T2()
+	T3(2, 3)
+
+	T4(1, 4, 5, 6)
+
+	var e int = 1
+	var f int64 = 2354
+	var c string = "Hello"
+	var d float32 = 1.234
+	T5(e, f, c, d)
+
+	T6()
+
+	T7()
+
+	fmt.Println(T8("t1.go_bk", "t1.go"))
+}
